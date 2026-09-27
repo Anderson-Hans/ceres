@@ -1,0 +1,14 @@
+os: Linux 6.18.44-fc-v42 x86_64
+python: Python 3.11.15
+cpu_count: 4
+model name	: Intel(R) Xeon(R) Processor
+--- uv pip freeze
+-e file:///home/user/ceres
+iniconfig==2.3.0
+numpy==2.4.6
+packaging==26.3
+pluggy==1.6.0
+pygments==2.21.0
+pytest==9.1.1
+pyyaml==6.0.3
+scipy==1.17.1

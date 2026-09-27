@@ -1,0 +1,13 @@
+{
+  "run_id": "preflight-2026-09-27",
+  "started_at_utc": "2026-09-27",
+  "parent_commit": "ef811d4b69359e25110794e089a60c388bf312a1",
+  "commit_note": "пакет входит в commit, следующий за parent_commit; хэши файлов — reproducibility/content-hashes.txt",
+  "data": "none (рыночные и фундаментальные данные не использовались)",
+  "synthetic": true,
+  "seeds": {"power_simulation": 20260927},
+  "versions": {"ceres": "0.0.1", "spec": "v0.2", "execution_prompt": "v1.0", "preregistration": "0.1.0-draft",
+               "record_schema": "not yet defined (phase 0/1)", "parsers": "none", "models": "none"},
+  "environment": "reproducibility/environment.txt",
+  "reproducibility_check": "power-simulation.json побитово совпал при повторном запуске (системный Python и venv по requirements.lock)"
+}

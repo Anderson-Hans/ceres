@@ -1,0 +1,13 @@
+# Источники (черновик). Время публикации и наличие PIT-архивов — verified: false;
+# проверить по первоисточникам в фазе 0 и сохранить дату проверки.
+schema_version: "0.1.0"
+status: DRAFT
+observers:
+  usda_wasde:     {phase: 0, cadence: monthly,   entities: [ZC, ZS, ZW], key_env: null,                    verified: false}
+  usda_crop_progress: {phase: 0, cadence: weekly, entities: [ZC, ZS, ZW], key_env: NASS_QUICKSTATS_API_KEY, verified: false}
+  usda_grain_stocks:  {phase: 0, cadence: quarterly, entities: [ZC, ZS, ZW], key_env: NASS_QUICKSTATS_API_KEY, verified: false}
+  prices_futures: {phase: 0, cadence: daily, entities: [ZC, ZS, ZW], key_env: CERES_PRICE_VENDOR_API_KEY, license: required, verified: false}
+  usda_export_sales: {phase: 3, cadence: weekly, entities: [ZC, ZS, ZW], key_env: FAS_OPENDATA_API_KEY, verified: false}
+  noaa_weather:   {phase: 3, cadence: daily,     entities: [ZC, ZS, ZW], key_env: NOAA_CDO_TOKEN,          verified: false}
+  cftc_cot:       {phase: 3, cadence: weekly,    entities: [ZC, ZS, ZW], key_env: null,                    verified: false}
+  eia_gas_storage: {phase: 4, cadence: weekly,   entities: [NG],         key_env: EIA_API_KEY,             verified: false}

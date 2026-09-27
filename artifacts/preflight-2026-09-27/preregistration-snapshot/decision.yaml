@@ -1,0 +1,47 @@
+# Правила публикации SIGNAL | ABSTAIN (§4, ADR-03). Черновик, status: DRAFT.
+# Пороги заданы правилами от training-оценок и собственной неопределённости
+# модели, а не числами, подобранными по OOS.
+schema_version: "0.1.0"
+status: DRAFT
+record_schema_version: "1.0.0"
+abstain_rules:
+  interval_width:
+    rule: "q95 - q05 > width90_B0(t)"
+    reason: INTERVAL_TOO_WIDE
+  prior_shift:
+    definition: "|p_up(model) - p_up(B0)|"
+    rule: "prior_shift < z * sd_post(p_up(model))"
+    z: 1.645
+    reason: PRIOR_SHIFT_BELOW_THRESHOLD
+  regime_break_high: {reason: REGIME_BREAK_HIGH}
+  market_anomaly_high: {reason: MARKET_ANOMALY_HIGH}
+  required_source_missing: {reason: REQUIRED_SOURCE_MISSING}
+  required_source_invalid: {reason: REQUIRED_SOURCE_INVALID}
+  marker_not_evaluated_when_required: {reason: MARKER_NOT_EVALUATED}
+  mcmc_failed:
+    rule: "r_hat >= 1.01 or ess_bulk < 400 or ess_tail < 400 or divergences > 0"
+    reason: MCMC_DIAGNOSTICS_FAILED
+  instrument_role: {instruments: [ZW], reason: INSTRUMENT_ROLE_STRESS_TEST}
+freshness:
+  monthly_grace_business_days: 2
+  statuses: [not_yet_due, delayed, missing, invalid, cancelled]
+required_sources:
+  phase1: {B0: [prices], B1: [prices, usda_wasde]}
+reason_priority:
+  - PIT_VIOLATION
+  - UNSUPPORTED_CONTRACT_OR_HORIZON
+  - MODEL_NOT_ACCEPTED
+  - REQUIRED_SOURCE_MISSING
+  - REQUIRED_SOURCE_INVALID
+  - PRICE_MISSING
+  - MCMC_DIAGNOSTICS_FAILED
+  - POSTERIOR_INVALID
+  - B1_EMPTY_CLASS
+  - MARKET_ANOMALY_HIGH
+  - REGIME_BREAK_HIGH
+  - MARKER_NOT_EVALUATED
+  - INSTRUMENT_ROLE_STRESS_TEST
+  - INTERVAL_TOO_WIDE
+  - PRIOR_SHIFT_BELOW_THRESHOLD
+abstain_share_expectation: "60-85% — диагностика (§4), не квота"
+adr: [ADR-03]
