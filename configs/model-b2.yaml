@@ -1,0 +1,51 @@
+# Машиночитаемая спецификация B2 (ADR-10). status: DRAFT до ACCEPT_PREFLIGHT.
+schema_version: "0.1.0"
+status: DRAFT
+adr: ADR-10
+information_set: [stock_feature_x, seasonal_climatology_train]
+excluded_features: [noaa_weather, cftc_cot, usda_export_sales, usda_crop_progress, usda_grain_stocks,
+                    realized_volatility, calendar_spreads, open_interest]
+unit: {row: [crop, horizon, date], separate_model_per_horizon: true, horizons: [5, 21]}
+overlap: {method: composite_likelihood, row_weight: "1/H",
+          sensitivity: "non-overlapping labels t = 0 mod H, weight 1"}
+features:
+  sigma_seasonal: {definition: "sd of daily in-contract log returns in W(s)=±10 sessions, training, discount-weighted", unit: log_return_per_session}
+  m_clim: {definition: "median of training R(H) in W(s)", unit: log_return}
+  m_tilde: "m_clim / (sqrt(H) * sigma_seasonal)"
+  x: {definition: "SU(m*) - mean5(SU), same vintage (ADR-09)", unit: stocks_to_use_ratio, vintage: "latest WASDE with vintage_time <= as_of", extra_lag: 0}
+  x_tilde: "standardized by training mean/sd per crop, one point per WASDE release"
+  target_standardized: "u = R / (sqrt(H) * sigma_seasonal)"
+  regime_post_zw: {instrument: ZW, start: "2022-02-24"}
+  undefined_x: {train: exclude, oos: "fallback B0, abstain B2_FEATURE_UNDEFINED"}
+mean: "a_c + a_cy + b_c*x_tilde + g_c*m_tilde + q_c*x_tilde*m_tilde + [ZW]*post*delta_a"
+log_scale: "s_c + s_cy + [ZW]*post*delta_s"
+likelihood: {family: student_t, support: real_line}
+pooling: {crop: [a, b, g, q, s], year_within_crop: [a, s], parameterization: non_centered}
+priors:
+  a0: "Normal(0, 0.2)"
+  b0: "Normal(0, 0.2)"
+  q0: "Normal(0, 0.2)"
+  g0: "Normal(0, 0.5)"
+  s0: "Normal(0, 0.5)"
+  tau_a: "HalfNormal(0.1)"
+  tau_b: "HalfNormal(0.1)"
+  tau_q: "HalfNormal(0.1)"
+  tau_g: "HalfNormal(0.2)"
+  tau_s: "HalfNormal(0.2)"
+  tau_sy: "HalfNormal(0.2)"
+  tau_y: "HalfNormal(0.3)"
+  delta_a: "Normal(0, 0.5)"
+  delta_s: "Normal(0, 0.5)"
+  nu: "2 + Gamma(2, 0.1)"
+prior_sensitivity: {tau_scale_multiplier: 2.0}
+new_year: "a_cy*, s_cy* drawn from N(0, tau) per posterior draw; never fitted to holdout"
+censoring: {endpoint_only: true, up: right_censored, down: left_censored, unknown: exclude_from_training}
+scoring: {target: observed_settlement_return, predictive: latent_unclipped, mandatory_slice: no_limit_endpoints, revisit_threshold_share: 0.01}
+discounting: {weight: "(1/H) * 2^(-(T-a)/h)", h_grid_years: [2, 4, 8, 16, .inf], selection: inner_folds_forward_chaining,
+              inner_validation_years: "min(5, n_train - 5)", criterion: mean_crps}
+zw: {gate_weight: 0.0, publish_signal: false, sensitivity: exclude_zw_from_hierarchy}
+inference: {backend: numpyro, sampler: nuts, chains: 4, warmup: 1000, draws: 1000, target_accept_prob: 0.9,
+            seed_from: experiment.yaml:seeds.global, variational_substitution: forbidden}
+diagnostics: {r_hat_max_exclusive: 1.01, ess_bulk_min: 400, ess_tail_min: 400, divergences_max: 0,
+              ess_rule_source: "ADR-03 proposal, not v0.2"}
+ppc: [u_distribution_by_crop_and_window, tail_share_abs_u_gt_3, inner_fold_coverage_50_90]

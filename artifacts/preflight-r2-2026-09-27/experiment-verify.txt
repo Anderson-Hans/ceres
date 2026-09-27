@@ -1,0 +1,6 @@
+OK  docs/source/CERES-spec-v0.2.md: sha256 OK (db04298fdf4653eeecbb86eba581159f25bb4f0f50a71c8bfea38c9f75d44167)
+WARNING ADR not yet accepted: ADR-01, ADR-02, ADR-03, ADR-04, ADR-05, ADR-06, ADR-09, ADR-10, ADR-11
+WARNING 10 open item(s) block freezing
+INFO    DRAFT: OOS must not be opened until status is FROZEN
+INFO    ADR statuses: {'ADR-01': 'Proposed', 'ADR-02': 'Proposed', 'ADR-03': 'Proposed', 'ADR-04': 'Proposed', 'ADR-05': 'Proposed', 'ADR-06': 'Proposed', 'ADR-07': 'Proposed', 'ADR-08': 'Proposed', 'ADR-09': 'Proposed', 'ADR-10': 'Proposed', 'ADR-11': 'Proposed'}
+engineering: PASS

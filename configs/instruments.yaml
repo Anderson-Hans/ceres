@@ -1,0 +1,31 @@
+# Реестр контрактов (черновик). Все биржевые параметры — verified: false:
+# проверка по первоисточнику CME/CBOT для каждой исторической эпохи —
+# задача фазы 0 (сеть к cmegroup.com в среде аудита закрыта, 2026-09-27).
+schema_version: "0.1.0"
+status: DRAFT
+instruments:
+  ZC:
+    name: "Corn futures (CBOT)"
+    panel_month: Z
+    marketing_year_start: "09-01"
+    quote_unit: "US cents per bushel"
+    to_verify: [contract_size, tick_size, last_trading_day_rule, first_notice_day_rule,
+                daily_price_limit_history, spot_month_limit_applicability, session_times_by_epoch]
+    verified: false
+  ZS:
+    name: "Soybean futures (CBOT)"
+    panel_month: X
+    marketing_year_start: "09-01"
+    quote_unit: "US cents per bushel"
+    to_verify: [contract_size, tick_size, last_trading_day_rule, first_notice_day_rule,
+                daily_price_limit_history, spot_month_limit_applicability, session_times_by_epoch]
+    verified: false
+  ZW:
+    name: "Chicago SRW Wheat futures (CBOT)"
+    panel_month: N
+    marketing_year_start: "06-01"
+    quote_unit: "US cents per bushel"
+    to_verify: [contract_size, tick_size, last_trading_day_rule, first_notice_day_rule,
+                daily_price_limit_history, spot_month_limit_applicability, session_times_by_epoch]
+    verified: false
+excluded: [ZO]   # §2.4

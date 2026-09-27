@@ -1,0 +1,23 @@
+{
+  "run_id": "preflight-r2-2026-09-27",
+  "milestone": "PREFLIGHT",
+  "revision": 2,
+  "responds_to": "docs/reviews/CERES_PREFLIGHT_REVIEW_v1.0.md (CHANGES_REQUIRED)",
+  "state": "READY_FOR_REVIEW",
+  "engineering": "PASS",
+  "data": "BLOCKED_DATA",
+  "science": "NOT_APPLICABLE",
+  "review": "PENDING",
+  "next_gate": "ACCEPT_PREFLIGHT | CHANGES_REQUIRED",
+  "allowed_next_phase": null,
+  "phase0_started": false,
+  "synthetic_results_present": true,
+  "synthetic_results_location": "synthetic/simstudy/",
+  "synthetic_results_note": "is_synthetic=true; описывает только зарегистрированный DGP; не рыночный результат; хранится отдельно от science/",
+  "stop_science_set": false,
+  "adr_status": {"ADR-01": "Proposed v1.1", "ADR-02": "Proposed v1.1", "ADR-03": "Proposed v1.1", "ADR-04": "Proposed v1.1",
+                 "ADR-05": "Proposed v1.1", "ADR-06": "Proposed v1.1", "ADR-07": "Proposed v1.0", "ADR-08": "Proposed v1.0",
+                 "ADR-09": "Proposed v1.1", "ADR-10": "Proposed v1.0", "ADR-11": "Proposed v1.0"},
+  "open_items": ["OI-01", "OI-02", "OI-03", "OI-04", "OI-05", "OI-06", "OI-07", "OI-08", "OI-09", "OI-10"],
+  "preregistration_status": "DRAFT 0.2.0-draft"
+}

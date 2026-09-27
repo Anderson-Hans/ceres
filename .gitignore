@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.env
+# Сырые лицензированные данные никогда не коммитятся
+data/raw/
+data/store/
+artifacts/*/raw/
+.coverage
