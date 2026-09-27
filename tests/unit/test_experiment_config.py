@@ -52,6 +52,9 @@ def test_spec_invariants_enforced(tmp_path, root):
         lambda c: c["instruments"].append({"root": "NG", "gate_weight": 0.0}),
         lambda c: c["gate_phase2"]["bootstrap"].__setitem__("unit", "day"),
         lambda c: c["spec"].__setitem__("sha256", "0" * 64),
+        lambda c: c["gate_phase1"].__setitem__("rule", "brier_E(B1) < brier_E(B0)"),
+        lambda c: c["gate_phase2"]["ci"].__setitem__("sided", "one_sided"),
+        lambda c: c["models"]["B2"].__setitem__("spec_file", "configs/missing.yaml"),
     ]
     for mutate in cases:
         rep = verify_experiment(_variant(tmp_path, mutate), root)

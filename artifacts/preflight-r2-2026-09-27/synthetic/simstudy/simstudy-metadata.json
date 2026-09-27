@@ -1,0 +1,312 @@
+{
+  "is_synthetic": true,
+  "purpose": "preflight evaluation of CI methods for the §10 gate and of the phase-1 rule; not a market result",
+  "config": {
+    "seed": 20260927,
+    "n_reps_null": 2000,
+    "n_reps_pos": 1000,
+    "n_resamples": 2000,
+    "oos_years": [
+      6,
+      10,
+      15,
+      20,
+      30
+    ],
+    "target_skills": [
+      0.01,
+      0.02,
+      0.03,
+      0.05
+    ],
+    "scenarios": [
+      "S0_null_exch",
+      "S0_null_exch_ar",
+      "S0_null_exch_heavy",
+      "S0_null_est",
+      "S1_oracle",
+      "S2_est",
+      "S3_est_ar",
+      "S4_partial_heavy"
+    ]
+  },
+  "scenarios": [
+    {
+      "name": "S0_null_exch",
+      "kind": "null_exchangeable",
+      "rho_info": 1.0,
+      "ar_phi": 0.0,
+      "vol_logsd": 0.3,
+      "shocks": "normal",
+      "n_train": 10,
+      "rho_eps": 0.7,
+      "rho_z": 0.7,
+      "vol_median": 0.015,
+      "note": "нулевой: обменные модели, независимые годы"
+    },
+    {
+      "name": "S0_null_exch_ar",
+      "kind": "null_exchangeable",
+      "rho_info": 1.0,
+      "ar_phi": 0.5,
+      "vol_logsd": 0.3,
+      "shocks": "normal",
+      "n_train": 10,
+      "rho_eps": 0.7,
+      "rho_z": 0.7,
+      "vol_median": 0.015,
+      "note": "нулевой: AR(1)=0.5 между годами"
+    },
+    {
+      "name": "S0_null_exch_heavy",
+      "kind": "null_exchangeable",
+      "rho_info": 1.0,
+      "ar_phi": 0.0,
+      "vol_logsd": 0.6,
+      "shocks": "t4",
+      "n_train": 10,
+      "rho_eps": 0.7,
+      "rho_z": 0.7,
+      "vol_median": 0.015,
+      "note": "нулевой: неоднородные годы, t4-шоки"
+    },
+    {
+      "name": "S0_null_est",
+      "kind": "estimated",
+      "rho_info": 0.0,
+      "ar_phi": 0.0,
+      "vol_logsd": 0.3,
+      "shocks": "normal",
+      "n_train": 10,
+      "rho_eps": 0.7,
+      "rho_z": 0.7,
+      "vol_median": 0.015,
+      "note": "нулевой: признак без информации, параметры оцениваются"
+    },
+    {
+      "name": "S1_oracle",
+      "kind": "oracle",
+      "rho_info": 1.0,
+      "ar_phi": 0.0,
+      "vol_logsd": 0.3,
+      "shocks": "normal",
+      "n_train": 10,
+      "rho_eps": 0.7,
+      "rho_z": 0.7,
+      "vol_median": 0.015,
+      "note": "ориентир внутри DGP: истинный дрейф известен"
+    },
+    {
+      "name": "S2_est",
+      "kind": "estimated",
+      "rho_info": 0.7,
+      "ar_phi": 0.0,
+      "vol_logsd": 0.3,
+      "shocks": "normal",
+      "n_train": 10,
+      "rho_eps": 0.7,
+      "rho_z": 0.7,
+      "vol_median": 0.015,
+      "note": "признак corr 0.7, параметры по 10 training-годам"
+    },
+    {
+      "name": "S3_est_ar",
+      "kind": "estimated",
+      "rho_info": 0.7,
+      "ar_phi": 0.5,
+      "vol_logsd": 0.3,
+      "shocks": "normal",
+      "n_train": 10,
+      "rho_eps": 0.7,
+      "rho_z": 0.7,
+      "vol_median": 0.015,
+      "note": "как S2 + AR(1)=0.5 между годами"
+    },
+    {
+      "name": "S4_partial_heavy",
+      "kind": "partial",
+      "rho_info": 0.7,
+      "ar_phi": 0.0,
+      "vol_logsd": 0.6,
+      "shocks": "t4",
+      "n_train": 10,
+      "rho_eps": 0.7,
+      "rho_z": 0.7,
+      "vol_median": 0.015,
+      "note": "признак corr 0.7, известные параметры, неоднородные годы, t4-шоки"
+    }
+  ],
+  "constants": {
+    "horizons": [
+      5,
+      21
+    ],
+    "n_crops": 2,
+    "days_per_year": 250,
+    "n_t_per_year": 228,
+    "level": 0.95,
+    "null_snr_target": 0.02
+  },
+  "reference_skills": [
+    {
+      "scenario": "S0_null_exch",
+      "target_skill": null,
+      "snr_s": 0.05121923262341721,
+      "method": "exact (symmetry)",
+      "value": 0.0,
+      "mcse": 0.0
+    },
+    {
+      "scenario": "S0_null_exch_ar",
+      "target_skill": null,
+      "snr_s": 0.05121923262341721,
+      "method": "exact (symmetry)",
+      "value": 0.0,
+      "mcse": 0.0
+    },
+    {
+      "scenario": "S0_null_exch_heavy",
+      "target_skill": null,
+      "snr_s": 0.05121923262341721,
+      "method": "exact (symmetry)",
+      "value": 0.0,
+      "mcse": 0.0
+    },
+    {
+      "scenario": "S0_null_est",
+      "target_skill": null,
+      "snr_s": 0.05121923262341721,
+      "method": "conditional on fitted parameters; analytic E[CRPS|year], MC over reference years",
+      "value": null,
+      "mcse": 0.0
+    },
+    {
+      "scenario": "S1_oracle",
+      "target_skill": 0.01,
+      "snr_s": 0.03592162080954479,
+      "method": "closed form",
+      "value": 0.010000000000026765,
+      "mcse": 0.0
+    },
+    {
+      "scenario": "S1_oracle",
+      "target_skill": 0.02,
+      "snr_s": 0.05121923262341721,
+      "method": "closed form",
+      "value": 0.019999999999999685,
+      "mcse": 0.0
+    },
+    {
+      "scenario": "S1_oracle",
+      "target_skill": 0.03,
+      "snr_s": 0.06325291934479925,
+      "method": "closed form",
+      "value": 0.02999999999969205,
+      "mcse": 0.0
+    },
+    {
+      "scenario": "S1_oracle",
+      "target_skill": 0.05,
+      "snr_s": 0.08304841458356425,
+      "method": "closed form",
+      "value": 0.04999999999999982,
+      "mcse": 0.0
+    },
+    {
+      "scenario": "S2_est",
+      "target_skill": 0.01,
+      "snr_s": 0.05193040589753636,
+      "method": "conditional on fitted parameters; analytic E[CRPS|year], MC over reference years",
+      "value": null,
+      "mcse": 0.0
+    },
+    {
+      "scenario": "S2_est",
+      "target_skill": 0.02,
+      "snr_s": 0.07497838718087267,
+      "method": "conditional on fitted parameters; analytic E[CRPS|year], MC over reference years",
+      "value": null,
+      "mcse": 0.0
+    },
+    {
+      "scenario": "S2_est",
+      "target_skill": 0.03,
+      "snr_s": 0.09382462185541739,
+      "method": "conditional on fitted parameters; analytic E[CRPS|year], MC over reference years",
+      "value": null,
+      "mcse": 0.0
+    },
+    {
+      "scenario": "S2_est",
+      "target_skill": 0.05,
+      "snr_s": 0.12677287961476688,
+      "method": "conditional on fitted parameters; analytic E[CRPS|year], MC over reference years",
+      "value": null,
+      "mcse": 0.0
+    },
+    {
+      "scenario": "S3_est_ar",
+      "target_skill": 0.01,
+      "snr_s": 0.05193040589753636,
+      "method": "conditional on fitted parameters; analytic E[CRPS|year], MC over reference years",
+      "value": null,
+      "mcse": 0.0
+    },
+    {
+      "scenario": "S3_est_ar",
+      "target_skill": 0.02,
+      "snr_s": 0.07497838718087267,
+      "method": "conditional on fitted parameters; analytic E[CRPS|year], MC over reference years",
+      "value": null,
+      "mcse": 0.0
+    },
+    {
+      "scenario": "S3_est_ar",
+      "target_skill": 0.03,
+      "snr_s": 0.09382462185541739,
+      "method": "conditional on fitted parameters; analytic E[CRPS|year], MC over reference years",
+      "value": null,
+      "mcse": 0.0
+    },
+    {
+      "scenario": "S3_est_ar",
+      "target_skill": 0.05,
+      "snr_s": 0.12677287961476688,
+      "method": "conditional on fitted parameters; analytic E[CRPS|year], MC over reference years",
+      "value": null,
+      "mcse": 0.0
+    },
+    {
+      "scenario": "S4_partial_heavy",
+      "target_skill": 0.01,
+      "snr_s": 0.05193040589753636,
+      "method": "Monte Carlo over simulated daily paths (20000 years), batch-means MCSE",
+      "value": 0.010548604292537123,
+      "mcse": 0.0002499518597478362
+    },
+    {
+      "scenario": "S4_partial_heavy",
+      "target_skill": 0.02,
+      "snr_s": 0.07497838718087267,
+      "method": "Monte Carlo over simulated daily paths (20000 years), batch-means MCSE",
+      "value": 0.020288523381191803,
+      "mcse": 0.000576025980698393
+    },
+    {
+      "scenario": "S4_partial_heavy",
+      "target_skill": 0.03,
+      "snr_s": 0.09382462185541739,
+      "method": "Monte Carlo over simulated daily paths (20000 years), batch-means MCSE",
+      "value": 0.03087656923732307,
+      "mcse": 0.0005657361433268747
+    },
+    {
+      "scenario": "S4_partial_heavy",
+      "target_skill": 0.05,
+      "snr_s": 0.12677287961476688,
+      "method": "Monte Carlo over simulated daily paths (20000 years), batch-means MCSE",
+      "value": 0.05372780202548377,
+      "mcse": 0.0009968934482179588
+    }
+  ]
+}

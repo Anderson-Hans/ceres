@@ -60,9 +60,9 @@ def skill_ratio_block_bootstrap(loss_model, loss_ref, weights, blocks, *,
 def skill_ratio_jackknife_t(loss_model, loss_ref, weights, blocks, *, level=0.95):
     """Delete-one-block jackknife для skill с квантилем Стьюдента t(k-1).
 
-    Предлагаемый основной метод ADR-05 при малом числе блоков: перцентильная
-    блочная переоценка при 6–20 блоках систематически недопокрывает
-    (см. artifacts/preflight-*/science/power-simulation.md).
+    Кандидаты ADR-05 п.2.4: JK (блок = год) и JK2 (блок = пара соседних лет —
+    передайте метки blocks // 2). Допустимость проверена симуляционным
+    исследованием (artifacts/preflight-r2-*/synthetic/simstudy/).
     """
     from scipy.stats import t as student_t
 

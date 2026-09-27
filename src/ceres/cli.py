@@ -42,18 +42,43 @@ def cmd_experiment_verify(args) -> int:
     return EXIT_OK if rep.ok else EXIT_FAIL
 
 
-def cmd_power_sim(args) -> int:
-    from ceres.preflight.power import run_power_grid, to_markdown
-    res = run_power_grid(
-        target_skills=[float(x) for x in args.skills.split(",")],
-        years_grid=[int(x) for x in args.years.split(",")],
-        n_sims=args.n_sims, seed=args.seed)
+def cmd_simstudy(args) -> int:
+    import platform
+
+    import numpy
+    import scipy
+
+    from ceres.preflight import simstudy as st
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
-    (out / "power-simulation.json").write_text(json.dumps(res, indent=2, ensure_ascii=False) + "\n",
-                                               encoding="utf-8")
-    (out / "power-simulation.md").write_text(to_markdown(res), encoding="utf-8")
-    print(to_markdown(res))
+    cfg = st.StudyConfig(seed=args.seed, n_reps_null=args.n_reps_null, n_reps_pos=args.n_reps_pos,
+                         n_resamples=args.n_resamples)
+    log_lines = [f"python={platform.python_version()} numpy={numpy.__version__} scipy={scipy.__version__} "
+                 f"machine={platform.machine()}"]
+
+    def log(msg):
+        print(msg, flush=True)
+        log_lines.append(msg)
+
+    rows, ref_info = st.run_study(cfg, log=log)
+    st.write_replicates_csv_gz(rows, out / "simstudy-replicates.csv.gz")
+    summary = st.aggregate(st.read_replicates_csv_gz(out / "simstudy-replicates.csv.gz"))
+    adm = st.admissibility(summary)
+    meta = st.study_metadata(cfg, ref_info)
+    dump = lambda o: json.dumps(o, indent=2, ensure_ascii=False, default=str) + "\n"  # noqa: E731
+    (out / "simstudy-metadata.json").write_text(dump(meta), encoding="utf-8")
+    (out / "simstudy-summary.json").write_text(dump(summary), encoding="utf-8")
+    (out / "simstudy-admissibility.json").write_text(dump(adm), encoding="utf-8")
+    (out / "simstudy-summary.md").write_text(st.summary_markdown(summary, adm, meta), encoding="utf-8")
+    # операционные метки времени — только в логе, не в детерминированных файлах
+    (out / "simstudy-run.log").write_text("\n".join(log_lines) + "\n", encoding="utf-8")
+    return EXIT_OK
+
+
+def cmd_simstudy_aggregate(args) -> int:
+    from ceres.preflight import simstudy as st
+    summary = st.aggregate(st.read_replicates_csv_gz(Path(args.replicates)))
+    print(json.dumps(summary, indent=2, ensure_ascii=False, default=str))
     return EXIT_OK
 
 
@@ -77,13 +102,16 @@ def build_parser() -> argparse.ArgumentParser:
     ev.set_defaults(func=cmd_experiment_verify)
 
     pre = sub.add_parser("preflight").add_subparsers(dest="sub", required=True)
-    ps = pre.add_parser("power-sim", help="синтетическая оценка мощности критерия §10")
-    ps.add_argument("--skills", default="0.005,0.01,0.02,0.03,0.05")
-    ps.add_argument("--years", default="6,10,15,20")
-    ps.add_argument("--n-sims", type=int, default=300)
+    ps = pre.add_parser("simstudy", help="синтетическое исследование методов ДИ §10 и правила фазы 1")
     ps.add_argument("--seed", type=int, default=20260927)
+    ps.add_argument("--n-reps-null", type=int, default=2000)
+    ps.add_argument("--n-reps-pos", type=int, default=1000)
+    ps.add_argument("--n-resamples", type=int, default=2000)
     ps.add_argument("--out", required=True)
-    ps.set_defaults(func=cmd_power_sim)
+    ps.set_defaults(func=cmd_simstudy)
+    pa = pre.add_parser("simstudy-aggregate", help="пересчитать сводку из файла повторений")
+    pa.add_argument("--replicates", required=True)
+    pa.set_defaults(func=cmd_simstudy_aggregate)
 
     data = sub.add_parser("data").add_subparsers(dest="sub", required=True)
     for name in ("build", "validate"):

@@ -1,0 +1,17 @@
+..................................                                       [100%]
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.11.15-final-0 _______________
+
+Name                                Stmts   Miss  Cover
+-------------------------------------------------------
+src/ceres/__init__.py                   2      0   100%
+src/ceres/cli.py                      104     29    72%
+src/ceres/eval/__init__.py              0      0   100%
+src/ceres/eval/bootstrap.py            52      2    96%
+src/ceres/eval/crps.py                 37      2    95%
+src/ceres/preflight/__init__.py         0      0   100%
+src/ceres/preflight/experiment.py     108      5    95%
+src/ceres/preflight/simstudy.py       366     28    92%
+src/ceres/preflight/spec.py            19      0   100%
+-------------------------------------------------------
+TOTAL                                 688     66    90%

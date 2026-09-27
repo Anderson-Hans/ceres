@@ -102,6 +102,17 @@ def verify_experiment(cfg_path: Path, root: Path) -> Report:
     if g2.get("bootstrap", {}).get("unit") in {None, "row", "day"}:
         r.errors.append("gate_phase2.bootstrap.unit must be a dependence-preserving block")
 
+    g1 = cfg.get("gate_phase1", {})
+    if "B1_no_deciles" not in str(g1.get("rule", "")):
+        r.errors.append("gate_phase1.rule must compare B1 with B1_no_deciles (review §4)")
+    b2 = cfg.get("models", {}).get("B2", {})
+    spec_file = b2.get("spec_file")
+    if not spec_file or not (root / spec_file).exists():
+        r.errors.append("models.B2.spec_file must point to an existing B2 specification (review §6)")
+    ci = g2.get("ci", {})
+    if ci.get("sided") != "two_sided" or ci.get("level") != 0.95:
+        r.errors.append("gate_phase2.ci must be two-sided 95% (§10, review §1)")
+
     # ADR: все ссылки существуют; заморозка требует Accepted
     refs: set[str] = set()
     _collect_adr_refs(cfg, refs)

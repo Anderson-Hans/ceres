@@ -1,4 +1,4 @@
-# Runbook (стадия PREFLIGHT)
+# Runbook (стадия PREFLIGHT, ревизия 2)
 
 ## Окружение
 
@@ -15,8 +15,10 @@ python -m pip install -e . --no-deps
 ```bash
 python -m ceres.cli spec verify                      # неизменность v0.2 (SHA-256)
 python -m ceres.cli experiment verify                # проверка предрегистрации
-python -m ceres.cli preflight power-sim \
-    --n-sims 1000 --out artifacts/preflight-2026-09-27/science   # синтетика, seed 20260927
+python -m ceres.cli preflight simstudy \
+    --out artifacts/preflight-r2-2026-09-27/synthetic/simstudy    # синтетика, seed 20260927, ~25 мин на 1 CPU
+python -m ceres.cli preflight simstudy-aggregate \
+    --replicates artifacts/preflight-r2-2026-09-27/synthetic/simstudy/simstudy-replicates.csv.gz
 python -m pytest -q                                  # offline-тесты
 ```
 

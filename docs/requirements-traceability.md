@@ -1,5 +1,7 @@
 # Трассировка требований CERES
 
+**Версия:** 1.1 (2026-09-27). История: 1.0 — commit 9d4ebc2; 1.1 — по рецензии `CERES_PREFLIGHT_REVIEW_v1.0`: симуляционное исследование вместо простой симуляции мощности, B1_no_deciles и правило фазы 1, спецификация B2 (ADR-10), индикатор базиса сохранён, требование к поставке EOD.
+
 Колонки: требование → раздел v0.2 → код → тест → артефакт → фаза → статус.
 Тип: **[SPEC]** — требование v0.2; **[EXEC]** — инженерное дополнение промпта v1.0;
 **[ADR]** — формализация пробела (Proposed до решения аудитора).
@@ -14,8 +16,10 @@
 | P-01 | Исходная спецификация хранится без изменений, hash проверяется | EXEC | — | `src/ceres/preflight/spec.py` | `tests/unit/test_spec_integrity.py` | `docs/source/SHA256SUMS` | preflight | DONE |
 | P-02 | Не объявлять аудит пройденным; исполнитель не подписывает свой аудит | SPEC/EXEC | заголовок, §12 | `preflight/experiment.py` (FROZEN требует Accepted) | `test_all_adrs_are_proposed_not_self_accepted`, `test_freezing_requires_accepted_adrs` | `status.json` | preflight | DONE |
 | P-03 | Машиночитаемая конфигурация эксперимента + проверка | EXEC | §10 | `configs/experiment.yaml`, `preflight/experiment.py`, `cli.py experiment verify` | `tests/unit/test_experiment_config.py` | `experiment-verify.txt` | preflight | DONE |
-| P-04 | ADR по пробелам 01–05 (+06–09) | EXEC | §3,§4,§5,§7,§10 | — | — | `docs/decisions/` | preflight | DONE (Proposed) |
-| P-05 | Оценка чувствительности проверки до OOS на симуляции | EXEC | §12 в.1 | `preflight/power.py`, `eval/bootstrap.py` | `tests/statistical/test_power_simulation.py` | `science/power-simulation.{md,json}` | preflight | DONE (синтетика) |
+| P-04 | ADR по пробелам 01–05 (+06–10) с версиями и историей | EXEC | §3,§4,§5,§7,§10 | — | — | `docs/decisions/` | preflight | DONE (все Proposed) |
+| P-05 | Симуляционное исследование методов ДИ §10 и правила фазы 1: нулевой и положительные сценарии, оценивание параметров, AR лет, тяжёлые хвосты, MCSE | EXEC / рецензия §2–3 | §12 в.1, §10 | `preflight/simstudy.py`, `eval/bootstrap.py` | `tests/statistical/test_simstudy.py` | `synthetic/simstudy/*` | preflight | DONE (синтетика) |
+| P-07 | Требование к поставке EOD, запрос сетевого доступа, уровни свидетельств по источникам | рецензия §8 | §6 | — | — | `docs/eod-delivery-requirements.md`, `docs/network-access-request.md`, `docs/data-readiness.md` | preflight | DONE |
+| P-08 | Заполненный handoff preflight | рецензия §9 | — | — | — | `docs/handoff/preflight-handoff.md` | preflight | DONE |
 | P-06 | Команды фаз не выполняются до приёмки (NOT_RUN ≠ PASS) | EXEC | — | `cli.py` | `tests/unit/test_cli.py` | — | preflight | DONE |
 
 ## Цель, выход, решение
@@ -57,14 +61,15 @@
 | M-01 | B0 климатология + случайное блуждание | SPEC/ADR-01 | §3 | `models/b0.py` | `tests/unit/test_b0.py` | metrics-overall | 1 | PENDING_ADR |
 | M-02 | B1 Beta-Binomial, закрытая форма, децили запасов | SPEC/ADR-01/09 | §3 | `models/b1.py` | `tests/unit/test_b1.py` | — | 1 | PENDING_ADR |
 | M-03 | Оболочка распределения B1 | ADR-01 | — | `models/b1_envelope.py` | `tests/unit/test_b1_envelope.py` | — | 1 | PENDING_ADR |
-| M-04 | B2 NumPyro/NUTS с частичным пулингом | SPEC | §3, §9 | `models/b2.py` | `tests/statistical/test_b2_recovery.py` | mcmc-diagnostics | 2 | PENDING_ADR (спецификация B2 не задана, OI-02) |
+| M-03a | Контроль B1_no_deciles | ADR-01 п.4a / рецензия §4 | — | `models/b1.py` | `tests/unit/test_b1.py::test_no_deciles_control` | — | 1 | PENDING_ADR |
+| M-04 | B2 NumPyro/NUTS с частичным пулингом | SPEC/ADR-10 | §3, §9 | `models/b2.py`; спецификация — `configs/model-b2.yaml` | `tests/unit/test_model_b2_config.py` (спецификация — DONE); `tests/statistical/test_b2_recovery.py` (PLANNED) | mcmc-diagnostics | 2 | PENDING_ADR (спецификация предложена) |
 | M-05 | r_hat < 1.01 и n_eff — блокирующее условие публикации | SPEC/ADR-03 | §7.2 | `decision/diagnostics.py` | `tests/unit/test_mcmc_block.py` | mcmc-diagnostics | 2 | PENDING_ADR |
 | V-01 | Walk-forward по маркетинговым годам, расширяющееся окно, burn-in ≥ 10, без перемешивания | SPEC | §7.2 | `eval/walkforward.py` | `tests/unit/test_walkforward.py`; инвариант — `test_spec_invariants_enforced` | fold-manifest | 1 | PLANNED (инвариант — DONE) |
 | V-02 | Приоры/децили/пороги только по training | SPEC/EXEC | §7.2 | `eval/walkforward.py` | `tests/pit/test_train_only_estimation.py` | — | 1 | PLANNED |
 | V-03 | CRPS основной; Brier, reliability, coverage; accuracy — справочно | SPEC | §7.2 | `eval/crps.py` | `tests/unit/test_crps.py`; инвариант конфигурации | metrics-* | 1 | DONE (метрики CRPS/Brier), PLANNED (reliability, coverage) |
 | V-04 | Метрики на полной допустимой выборке, не только SIGNAL | EXEC | — | `eval/metrics.py` | `tests/unit/test_full_sample_metrics.py` | abstain-report | 1 | PLANNED |
-| V-05 | ДИ с учётом зависимости, не iid по строкам | EXEC/ADR-05 | §10 | `eval/bootstrap.py` | `tests/unit/test_bootstrap.py` | confidence-intervals | 1–2 | DONE (методы), PENDING_ADR (выбор основного) |
-| G-1 | Гейт фазы 1: Brier B1 < B0 | SPEC | §9 | `eval/gates.py` | `tests/unit/test_gates.py` | status.json | 1 | PENDING_ADR |
+| V-05 | Двусторонний 95% ДИ с учётом зависимости, не iid по строкам; метод проверен на целевой статистике | EXEC/ADR-05 / рецензия §3 | §10 | `eval/bootstrap.py` | `tests/unit/test_bootstrap.py`, `tests/statistical/test_simstudy.py` | `synthetic/simstudy/simstudy-admissibility.json` | 1–2 | DONE (методы и проверка), PENDING_ADR (выбор основного) |
+| G-1 | Гейт фазы 1: Brier B1 < B0 (v0.2) и B1 < B1_no_deciles (предложение) | SPEC/ADR-01 | §9 | `eval/gates.py`; конфигурация — `gate_phase1` | `test_spec_invariants_enforced` (правило в конфигурации — DONE) | status.json | 1 | PENDING_ADR |
 | G-2 | Гейт фазы 2: B2 бьёт B1 | SPEC/ADR-01 | §9 | `eval/gates.py` | `tests/unit/test_gates.py` | status.json | 2 | PENDING_ADR |
 | G-3 | §10: lower(CI95(skill_CRPS vs B0)) > 0, иначе проект закрывается | SPEC/EXEC | §10 | `eval/gates.py` | `tests/unit/test_gates.py` | confidence-intervals | 2 | PENDING_ADR |
 | G-4 | Предрегистрация заморожена до OOS; изменения append-only | SPEC | §10 | `preflight/experiment.py` | `test_freezing_requires_accepted_adrs` | preregistration-snapshot | preflight→1 | DONE (контроль заморозки), PENDING_ADR (содержание) |
@@ -76,7 +81,7 @@
 |---|---|---|---|---|---|
 | X-01 | NOAA, COT по одному, с замером прироста; неудачный удаляется | SPEC | §9 | 3 | PLANNED |
 | X-02 | Export Sales в фазе 3 | EXEC/ADR-04 | §5.3 | 3 | PENDING_ADR |
-| X-03 | Маркеры: календарь, погода, режим, рыночная аномалия как kill-switch | SPEC | §8 | 3–4 | PLANNED; базис — PENDING_ADR (OI-08) |
+| X-03 | Маркеры: календарь, погода, режим, рыночная аномалия как kill-switch (включая индикатор базиса — не удалён) | SPEC | §8 | 3–4 | PLANNED; базис — оценка готовности к фазе 3 (ADR-04 v1.1) |
 | X-04 | Маркер концентрации OI на бесплатных данных CME | SPEC | §6.3, §14 | 3 | BLOCKED_DATA (история) |
 | X-05 | B4 change-point, PIT-детектор | SPEC | §3, §9 | 4A | PLANNED |
 | X-06 | NG отдельной ветвью, газовый год, HDD/CDD, свои режимы | SPEC | §5.5 | 4B | PLANNED |

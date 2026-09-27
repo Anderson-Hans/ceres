@@ -1,0 +1,26 @@
+os: Linux 6.18.44-fc-v42 x86_64
+python: Python 3.11.15
+cpu_count: 4
+model name	: Intel(R) Xeon(R) Processor
+    name: scipy-openblas
+    version: 0.3.31.188.0
+    name: scipy-openblas
+    version: 0.3.31.188.0
+    name: gcc
+    version: 14.2.1
+    name: gcc
+    version: 14.2.1
+threads: default (NumPy/SciPy не используют многопоточность в исследовании; BLAS не задействован в горячем цикле)
+--- uv pip freeze
+-e file:///home/user/ceres
+coverage==7.16.2
+iniconfig==2.3.0
+numpy==2.4.6
+packaging==26.3
+pluggy==1.6.0
+pygments==2.21.0
+pytest==9.1.1
+pytest-cov==7.1.0
+pyyaml==6.0.3
+scipy==1.17.1
+tomli==2.4.1
